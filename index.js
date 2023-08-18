@@ -12,8 +12,9 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
     console.error(`exec error: ${err}`);
     process.exit(1);
   }
-  console.log('\x1b[32m%s\x1b[0m', `List tag: ${tag}`);
   tag = tag.trim().split(/\s+/);
+
+  console.log('\x1b[32m%s\x1b[0m', `List tag: ${tag}`);
 
   const convertGroupedCommitsToString = (groupedCommits) => {
     let result = '';
@@ -41,6 +42,8 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
   };
 
   const formattingCommit = (previousTag, lastTag, callback) => {
+    console.log('\x1b[32m%s\x1b[0m', `Previous tag: ${previousTag} and Last Tag:  ${lastTag}`);
+
     exec(`git log ${previousTag}..${lastTag} --pretty=format:"%an: %s"`, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
@@ -49,6 +52,9 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
       }
 
       const commits = stdout.split('\n');
+
+      console.log('\x1b[32m%s\x1b[0m', `List commit: ${commits}`);
+
       const groupedCommits = commits.reduce((acc, commit) => {
         let [username, message] = commit.split(/: (.+)/);  // Split by the first colon
         message = message.replace(/\(([\w-]+)\)/, '');  // Remove the parenthetical type specifier
@@ -78,13 +84,13 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
   const preRelease = (tags) => {
     if (tags[0].includes("-rc.")) {
       formattingCommit(tags[1], tags[0], (result) => {
-        console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
+        console.log('\x1b[32m%s\x1b[0m', `Notes prerelease: ${result}`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
       });
     } else {
       const latestRcTag = tags.find(tag => tag.includes("-rc."));
       formattingCommit(tags[0], latestRcTag, (result) => {
-        console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
+        console.log('\x1b[32m%s\x1b[0m', `Notes prerelease: ${result}`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
       });
     }
@@ -95,7 +101,7 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
 
     formattingCommit(releaseTags[1], releaseTags[0], (result) => {
       fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
-      console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
+      console.log('\x1b[32m%s\x1b[0m', `Notes release: ${result}`);
     });
   };
 
