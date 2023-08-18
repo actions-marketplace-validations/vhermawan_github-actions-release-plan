@@ -1,0 +1,13 @@
+name: 'Release plan'
+description: 'Make a release note to very well'
+inputs:
+  prerelease:  
+    description: 'checking for release or not'
+    required: true
+    default: true
+outputs:
+  result: 
+    description: 'Release note'
+runs:
+  using: 'node16'
+  main: 'index.js'
