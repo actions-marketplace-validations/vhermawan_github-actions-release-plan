@@ -77,11 +77,13 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
   const preRelease = (tags) => {
     if (tags[0].includes("-rc.")) {
       formattingCommit(tags[1], tags[0], (result) => {
+        console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
       });
     } else {
       const latestRcTag = tags.find(tag => tag.includes("-rc."));
       formattingCommit(tags[0], latestRcTag, (result) => {
+        console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
       });
     }
@@ -92,8 +94,11 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
 
     formattingCommit(releaseTags[1], releaseTags[0], (result) => {
       fs.appendFileSync(process.env.GITHUB_OUTPUT, `result=${result}`);
+      console.log('\x1b[32m%s\x1b[0m', `Notes: ${result}`);
     });
   };
+
+  console.log('\x1b[32m%s\x1b[0m', `Default Release: ${process.env.INPUT_PRERELEASE}`);
 
   if (process.env.INPUT_PRERELEASE) {
     preRelease(tag)
