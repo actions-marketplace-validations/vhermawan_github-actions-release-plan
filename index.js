@@ -107,7 +107,7 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
 
   console.log('\x1b[32m%s\x1b[0m', `Default Release: ${process.env.INPUT_PRERELEASE}`);
 
-  if (process.env.INPUT_PRERELEASE) {
+  if (process.env.INPUT_PRERELEASE === 'true') {
     preRelease(tag)
   } else {
     release(tag)
