@@ -12,6 +12,7 @@ exec(`git for-each-ref --sort=-creatordate --format="%(refname:short)" "refs/tag
     console.error(`exec error: ${err}`);
     process.exit(1);
   }
+  console.log('\x1b[32m%s\x1b[0m', `List tag: ${tag}`);
   tag = tag.trim().split(/\s+/);
 
   const convertGroupedCommitsToString = (groupedCommits) => {
